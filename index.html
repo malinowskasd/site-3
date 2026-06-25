@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYSTERY AND ADVENTURE GAMES LTD | Interactive Software Publishers</title>
+    <meta name="description" content="Independent game development studio and software publisher in London, UK. Crafting enigmatic interactive software and mobile adventures.">
+    <style>
+        /* DESIGN SYSTEM: CINEMATIC MYSTERY STUDIO */
+        :root {
+            --bg-base: #0B0A11;         /* Deep Midnight/Indigo */
+            --bg-panel: #161423;        /* Dark Purple Slate */
+            --accent-gold: #D4AF37;     /* Antique Gold */
+            --accent-gold-dark: #AA8C2C;
+            --accent-crimson: #8A0303;  /* Deep Crimson */
+            --text-main: #FDFCF0;       /* Parchment White */
+            --text-muted: #9CA3AF;      /* Muted Gray */
+            --border-mystic: rgba(212, 175, 55, 0.2);
+            
+            --font-display: 'Playfair Display', 'Georgia', serif;
+            --font-body: 'Lato', system-ui, sans-serif;
+            --font-mono: 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-main);
+            background-color: var(--bg-base);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Abstract Fog & Vignette Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(11, 10, 17, 0.95) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .ambient-fog {
+            position: fixed;
+            top: -20vh; left: -20vw;
+            width: 80vw; height: 80vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -2;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .ambient-fog-2 {
+            position: fixed;
+            bottom: -20vh; right: -20vw;
+            width: 80vw; height: 80vh;
+            background: radial-gradient(circle, rgba(138, 3, 3, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -2;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            background: rgba(11, 10, 17, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-mystic);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* CSS Keyhole Icon */
+        .logo-icon {
+            width: 32px; height: 32px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+        .logo-icon::before {
+            content: '';
+            width: 10px; height: 10px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            margin-top: -2px;
+        }
+        .logo-icon::after {
+            content: '';
+            width: 12px; height: 8px;
+            background: var(--accent-gold);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            margin-top: -2px;
+        }
+
+        .nav-links { display: flex; gap: 35px; font-weight: 400; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;}
+        .nav-links a { text-decoration: none; color: var(--text-muted); transition: color 0.3s; }
+        .nav-links a:hover { color: var(--accent-gold); }
+
+        .btn-nav {
+            background: transparent;
+            color: var(--accent-gold) !important;
+            padding: 10px 24px;
+            border: 1px solid var(--accent-gold);
+            transition: all 0.3s;
+            font-family: var(--font-display);
+            letter-spacing: 1px;
+        }
+        .btn-nav:hover { background: var(--accent-gold); color: var(--bg-base) !important; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+
+        /* --- HERO SECTION --- */
+        header {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 140px 5% 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            color: var(--accent-gold);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--accent-gold);
+            padding-bottom: 5px;
+        }
+
+        header h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 5vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+
+        .text-gold {
+            color: var(--accent-gold);
+            font-style: italic;
+        }
+
+        header p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 550px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            color: var(--bg-base);
+            padding: 18px 40px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--accent-gold-dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+            background: var(--text-main);
+        }
+
+        /* Abstract Puzzle Box Graphic */
+        .hero-graphic {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .puzzle-cube {
+            width: 250px; height: 250px;
+            background: var(--bg-panel);
+            border: 2px solid var(--accent-gold);
+            position: relative;
+            transform: rotate(45deg);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 0 40px rgba(212, 175, 55, 0.1);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .puzzle-cube::before, .puzzle-cube::after {
+            content: ''; position: absolute; background: var(--accent-gold); opacity: 0.3;
+        }
+        .puzzle-cube::before { width: 100%; height: 2px; }
+        .puzzle-cube::after { height: 100%; width: 2px; }
+
+        .inner-cube {
+            width: 120px; height: 120px;
+            border: 2px solid var(--accent-crimson);
+            box-shadow: 0 0 20px rgba(138, 3, 3, 0.4);
+            animation: rotate-slow 20s linear infinite;
+        }
+
+        @keyframes rotate-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- OPERATIONS GRID --- */
+        .section {
+            padding: 100px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 50px 40px;
+            transition: all 0.3s;
+            position: relative;
+            text-align: center;
+        }
+
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--accent-gold); opacity: 0.3; transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-mystic);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        .service-card:hover::before { opacity: 1; }
+
+        .card-icon {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 25px;
+            display: inline-block;
+            font-style: italic;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* --- APP PROMO (CRITICAL FOR GOOGLE PLAY CONSOLE) --- */
+        .app-promo {
+            background: linear-gradient(135deg, var(--bg-panel) 0%, #050408 100%);
+            border: 1px solid var(--border-mystic);
+            padding: 80px 5%;
+            margin: 60px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-promo::after {
+            content: '';
+            position: absolute;
+            right: -100px; bottom: -100px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+            z-index: 0;
+        }
+
+        .app-text { position: relative; z-index: 1; }
+
+        .app-text h2 {
+            font-family: var(--font-display);
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .app-list { list-style: none; margin: 30px 0; }
+        .app-list li {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            color: var(--text-muted);
+        }
+        .app-list li::before {
+            content: '❖';
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+        }
+
+        /* Mobile Device Mockup for Software/Game Hub */
+        .mockup-phone {
+            width: 100%;
+            max-width: 320px;
+            height: 600px;
+            margin: 0 auto;
+            background: #000;
+            border: 6px solid #222;
+            border-radius: 35px;
+            padding: 15px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.15);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 25px;
+            background: #222;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .phone-screen {
+            flex: 1;
+            background: var(--bg-base);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .ui-header {
+            padding: 25px 20px 20px;
+            background: linear-gradient(180deg, rgba(212,175,55,0.1) 0%, transparent 100%);
+            text-align: center;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            border-bottom: 1px solid var(--border-mystic);
+            letter-spacing: 2px;
+        }
+
+        .ui-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .game-banner {
+            height: 140px;
+            background: linear-gradient(45deg, #111, #3a0000);
+            border: 1px solid var(--border-mystic);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            color: var(--text-main);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        
+        .game-banner span { font-size: 0.7rem; color: var(--accent-gold); letter-spacing: 3px; font-family: var(--font-mono); }
+
+        .ui-module {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .ui-module-title { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; }
+        .ui-module-val { font-size: 1rem; color: var(--text-main); font-family: var(--font-display); }
+
+        .ui-btn {
+            margin-top: auto;
+            background: transparent;
+            color: var(--accent-gold);
+            text-align: center;
+            padding: 15px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid var(--accent-gold);
+            border-radius: 2px;
+        }
+
+        /* --- VERIFICATION REGISTRY (EXACT D&B MATCH) --- */
+        .registry-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+        }
+
+        .data-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-mystic);
+            padding: 40px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .data-row {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+        }
+        .data-row:last-child { border: none; margin: 0; padding: 0; }
+
+        .data-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .data-value {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            font-weight: 400;
+            line-height: 1.6;
+            font-family: var(--font-display);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: var(--font-body);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #050408;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 80px 5% 40px;
+            margin-top: 80px;
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
+        }
+
+        .footer-col h4 {
+            color: var(--accent-gold);
+            font-family: var(--font-display);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 12px; }
+        .footer-col a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+        .footer-col a:hover { color: var(--text-main); }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #555;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 992px) {
+            .hero-grid, .app-promo, .registry-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .hero-graphic { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-fog"></div>
+    <div class="ambient-fog-2"></div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            MYSTERY & ADVENTURE
+        </div>
+        <div class="nav-links">
+            <a href="#services">The Studio</a>
+            <a href="#publishing">Digital Releases</a>
+            <a href="#registry">Archives</a>
+            <a href="#contact" class="btn-nav">Contact</a>
+        </div>
+    </nav>
+
+    <header>
+        <div class="hero-grid">
+            <div>
+                <div class="hero-tag">System Design & Prepackaged Software</div>
+                <h1>Crafting Enigmas. <br><span class="text-gold">Publishing Adventures.</span></h1>
+                <p>MYSTERY AND ADVENTURE GAMES LTD is an independent game development studio and software publisher in London. We build immersive prepackaged software and interactive narratives.</p>
+                <a href="#publishing" class="btn-primary">Unlock the Vault</a>
+            </div>
+            
+            <div class="hero-graphic">
+                <div class="puzzle-cube">
+                    <div class="inner-cube"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="services" class="section">
+        <div class="section-header">
+            <h2>Studio Capabilities</h2>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="card-icon">I.</div>
+                <h3>Software Publishers</h3>
+                <p>Officially licensed Software Publishers. We manage the conceptualization, development, and global distribution of digital applications and interactive stories.</p>
+            </div>
+            <div class="service-card">
+                <div class="card-icon">II.</div>
+                <h3>Computer Systems Design</h3>
+                <p>Executing high-level Computer Systems Design and Related Services to architect robust game engines, secure backend environments, and data processing solutions.</p>
+            </div>
+            <div class="service-card">
+                <div class="card-icon">III.</div>
+                <h3>Prepackaged Software</h3>
+                <p>Specializing in the creation of Prepackaged software and Information media. We deliver polished, consumer-ready digital entertainment across mobile platforms.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="publishing" class="section" style="padding-top: 0;">
+        <div class="app-promo">
+            <div class="app-text">
+                <div class="hero-tag" style="border-bottom: none; border-left: 2px solid var(--accent-gold); padding-left: 10px;">Google Play Developer Entity</div>
+                <h2>Mystery & Adventure Hub</h2>
+                <p style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 15px;">
+                    As an official Software Publisher, <strong>MYSTERY AND ADVENTURE GAMES LTD develops and distributes our prepackaged interactive software directly via mobile app stores.</strong>
+                </p>
+                <p style="color: var(--text-muted); line-height: 1.7;">
+                    Our digital portfolio is managed through our proprietary mobile applications. The Google Play ecosystem serves as the primary distribution channel for our mobile games, companion applications, and proprietary software tools designed by our studio.
+                </p>
+                
+                <ul class="app-list">
+                    <li>Direct distribution of internally developed mobile puzzle games.</li>
+                    <li>Secure in-app purchases and digital episode licensing.</li>
+                    <li>Over-the-air content updates for prepackaged gaming software.</li>
+                    <li>Integration with Google Play Games services for achievements.</li>
+                </ul>
+            </div>
+            
+            <div class="mockup-phone">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="ui-header">M&A_HUB</div>
+                    <div class="ui-content">
+                        
+                        <div class="game-banner">
+                            <span>CHAPTER I</span>
+                            THE HOLLOW INN
+                        </div>
+
+                        <div class="ui-module">
+                            <div class="ui-module-title">PUBLISHER</div>
+                            <div class="ui-module-val" style="color: var(--accent-gold);">Mystery and Adventure Games</div>
+                        </div>
+
+                        <div class="ui-module">
+                            <div class="ui-module-title">SOFTWARE STATUS</div>
+                            <div class="ui-module-val" style="font-family: var(--font-body); font-weight: normal; color: var(--text-muted);">Version 1.0.4 - Installed</div>
+                        </div>
+
+                        <div class="ui-btn">LAUNCH GAME</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="registry" class="section">
+        <div class="section-header">
+            <h2>Corporate Database Registry</h2>
+        </div>
+        <div class="registry-grid">
+            
+            <div class="data-panel">
+                <div class="data-row">
+                    <span class="data-label">Legal Entity Name</span>
+                    <span class="data-value">MYSTERY AND ADVENTURE GAMES LTD</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Industry Classification Profile</span>
+                    <span class="data-value" style="font-size: 0.95rem; line-height: 1.6; font-family: var(--font-body); font-weight: normal;">
+                        • Software Publishers<br>
+                        • Computer Systems Design and Related Services<br>
+                        • Publishing Industries<br>
+                        • Information<br>
+                        • Prepackaged software
+                    </span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Registered Headquarters Address</span>
+                    <span class="data-value" style="font-size: 0.95rem; font-family: var(--font-body); font-weight: normal;">
+                        71-75 Shelton Street LONDON<br>
+                        WC2H 9JQ United Kingdom
+                    </span>
+                </div>
+                <div class="data-row" style="border: none;">
+                    <span class="data-label">Official Developer Endpoint</span>
+                    <span class="data-value" style="color: var(--accent-gold);">info@mysteryandadventuregames.cloud</span>
+                </div>
+            </div>
+
+            <div id="contact">
+                <h3 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 20px;">Player Inquiries</h3>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Contact our studio to report bugs in our prepackaged software, inquire about publishing rights, or request technical support for mobile applications.</p>
+                
+                <form onsubmit="event.preventDefault();">
+                    <input type="text" placeholder="Player Name / License ID" required>
+                    <input type="email" placeholder="Contact Email Address" required>
+                    <textarea placeholder="Describe your software inquiry or support request..." rows="5" required></textarea>
+                    <button type="submit" class="btn-primary" style="width: 100%; border: none; cursor: pointer; box-shadow: none;">Send Message</button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="margin-bottom: 20px; font-size: 1rem;">
+                    <div class="logo-icon" style="width: 20px; height: 20px;"></div>
+                    MYSTERY & ADVENTURE
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Architecting, designing, and publishing enigmatic prepackaged software and interactive entertainment in the UK.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Digital Platforms</h4>
+                <ul>
+                    <li><a href="#">Google Play Publisher Status</a></li>
+                    <li><a href="#">Report Software Bug</a></li>
+                    <li><a href="#" style="color: var(--text-main); font-weight: bold;">Request Account & Data Deletion</a></li>
+                    <li><a href="#">Game Server Status</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Legal & Compliance</h4>
+                <ul>
+                    <li><a href="#">End User License Agreement (EULA)</a></li>
+                    <li><a href="#">Software Publishing Terms</a></li>
+                    <li><a href="#">Privacy Policy (GDPR)</a></li>
+                    <li><a href="#">In-App Purchase Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 MYSTERY AND ADVENTURE GAMES LTD. Registered in the UK. The Vault is Secure.
+        </div>
+    </footer>
+
+</body>
+</html>
